@@ -1,9 +1,11 @@
-// Background script for Work Time Tracker Pro
-// Handles communication between content script and popup
+// Background script for Work Timer Pro
+// Enhanced background processing with better notifications
 
 // Listen for messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'triggerWorkAction') {
+    console.log('Received work action:', request.actionType);
+    
     // Store the action to be executed by popup
     chrome.storage.local.set({ 
       pendingAction: request.actionType,
@@ -29,19 +31,20 @@ async function handleWorkAction(actionType) {
       isOnBreak: false,
       workStartTime: null,
       breakStartTime: null,
-      lastSaveTime: Date.now()
+      lastSaveTime: Date.now(),
+      appState: 'ready'
     };
     
     const now = Date.now();
     const timeDiff = Math.floor((now - state.lastSaveTime) / 1000);
     
     // Update work time if working
-    if (state.isWorking && !state.isOnBreak) {
+    if (state.isWorking && !state.isOnBreak && timeDiff > 0) {
       state.workSeconds += timeDiff;
     }
     
     // Update break time if on break
-    if (state.isOnBreak && state.breakSeconds > 0) {
+    if (state.isOnBreak && state.breakSeconds > 0 && timeDiff > 0) {
       state.breakSeconds = Math.max(0, state.breakSeconds - timeDiff);
     }
     
@@ -52,15 +55,10 @@ async function handleWorkAction(actionType) {
           state.isWorking = true;
           state.isOnBreak = false;
           state.workStartTime = now;
+          state.appState = 'working';
           
           // Show notification
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icons/icon48.png',
-            title: 'Work Started',
-            message: 'Work session started from job sheet! 💪'
-          });
-          
+          showNotification('Work Started', 'Work session started from job sheet! 💪', 'success');
           console.log('Work started from job sheet');
         }
         break;
@@ -70,14 +68,10 @@ async function handleWorkAction(actionType) {
           // Calculate total work time
           const totalHours = Math.floor(state.workSeconds / 3600);
           const totalMinutes = Math.floor((state.workSeconds % 3600) / 60);
+          const timeString = `${totalHours}h ${totalMinutes}m`;
           
           // Show notification with total work time
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icons/icon48.png',
-            title: 'Work Day Completed! 🎉',
-            message: `Total work time: ${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}`
-          });
+          showNotification('Work Day Completed! 🎉', `Total work time: ${timeString}`, 'success');
           
           // Reset state
           state = {
@@ -87,13 +81,11 @@ async function handleWorkAction(actionType) {
             isOnBreak: false,
             workStartTime: null,
             breakStartTime: null,
-            lastSaveTime: now
+            lastSaveTime: now,
+            appState: 'ready'
           };
           
-          // Clear storage
-          chrome.storage.local.remove(['workTrackerState']);
           console.log('Work ended from job sheet');
-          return;
         }
         break;
         
@@ -102,15 +94,11 @@ async function handleWorkAction(actionType) {
           state.isOnBreak = true;
           state.breakSeconds = 15 * 60; // 15 minutes
           state.breakStartTime = now;
+          state.currentBreakType = 'breakfast';
+          state.appState = 'break';
           
           // Show notification
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icons/icon48.png',
-            title: 'Breakfast Break Started',
-            message: 'Enjoy your 15-minute breakfast break! 🍽️'
-          });
-          
+          showNotification('Breakfast Break Started', 'Enjoy your 15-minute breakfast break! 🍽️', 'info');
           console.log('Breakfast break started from job sheet');
         }
         break;
@@ -120,15 +108,11 @@ async function handleWorkAction(actionType) {
           state.isOnBreak = true;
           state.breakSeconds = 60 * 60; // 60 minutes
           state.breakStartTime = now;
+          state.currentBreakType = 'lunch';
+          state.appState = 'break';
           
           // Show notification
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icons/icon48.png',
-            title: 'Lunch Break Started',
-            message: 'Enjoy your 1-hour lunch break! 🍽️'
-          });
-          
+          showNotification('Lunch Break Started', 'Enjoy your 1-hour lunch break! 🍽️', 'info');
           console.log('Lunch break started from job sheet');
         }
         break;
@@ -140,6 +124,32 @@ async function handleWorkAction(actionType) {
     
   } catch (error) {
     console.error('Error handling work action:', error);
+  }
+}
+
+// Enhanced notification system
+function showNotification(title, message, type = 'basic') {
+  const iconUrl = getNotificationIcon(type);
+  
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl: iconUrl,
+    title: title,
+    message: message,
+    priority: type === 'success' ? 1 : 0
+  });
+}
+
+function getNotificationIcon(type) {
+  switch (type) {
+    case 'success':
+      return 'icons/icon48.png';
+    case 'warning':
+      return 'icons/icon48.png';
+    case 'error':
+      return 'icons/icon48.png';
+    default:
+      return 'icons/icon48.png';
   }
 }
 
@@ -165,14 +175,18 @@ async function updateTimerInBackground() {
     const timeDiff = Math.floor((now - state.lastSaveTime) / 1000);
     
     if (timeDiff >= 1) {
+      let shouldUpdate = false;
+      
       // Update work time
       if (state.isWorking && !state.isOnBreak) {
         state.workSeconds += timeDiff;
+        shouldUpdate = true;
       }
       
       // Update break time
       if (state.isOnBreak && state.breakSeconds > 0) {
         state.breakSeconds = Math.max(0, state.breakSeconds - timeDiff);
+        shouldUpdate = true;
         
         // Set alarm when break is almost over (10 seconds warning)
         if (state.breakSeconds === 10) {
@@ -182,12 +196,15 @@ async function updateTimerInBackground() {
         // Check if break is over
         if (state.breakSeconds <= 0) {
           handleBreakAlarm();
+          return;
         }
       }
       
       // Save updated state
-      state.lastSaveTime = now;
-      chrome.storage.local.set({ workTrackerState: state });
+      if (shouldUpdate) {
+        state.lastSaveTime = now;
+        chrome.storage.local.set({ workTrackerState: state });
+      }
     }
   } catch (error) {
     console.error('Error updating timer:', error);
@@ -196,14 +213,19 @@ async function updateTimerInBackground() {
 
 async function handleBreakAlarm() {
   try {
+    // Update state to alarm mode
+    const result = await chrome.storage.local.get(['workTrackerState']);
+    if (result.workTrackerState) {
+      const state = result.workTrackerState;
+      state.isAlarmPlaying = true;
+      state.appState = 'alarm';
+      state.breakSeconds = 0;
+      
+      chrome.storage.local.set({ workTrackerState: state });
+    }
+    
     // Show break over notification
-    chrome.notifications.create({
-      type: 'basic',
-      iconUrl: 'icons/icon48.png',
-      title: 'Break Time Over! ⏰',
-      message: 'Your break time has ended. Please return to work.',
-      requireInteraction: true
-    });
+    showNotification('Break Time Over! ⏰', 'Your break time has ended. Please return to work.', 'warning');
     
     // Clear the alarm
     chrome.alarms.clear('breakAlarm');
@@ -217,4 +239,14 @@ async function handleBreakAlarm() {
 chrome.notifications.onClicked.addListener((notificationId) => {
   // Clear the notification
   chrome.notifications.clear(notificationId);
+});
+
+// Handle installation
+chrome.runtime.onInstalled.addListener(() => {
+  console.log('Work Timer Pro installed');
+});
+
+// Handle startup
+chrome.runtime.onStartup.addListener(() => {
+  console.log('Work Timer Pro started');
 });
