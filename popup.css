@@ -71,6 +71,21 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  position: relative;
+}
+
+/* Add subtle background pattern */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .app-container {
@@ -79,6 +94,8 @@ body {
   height: 100vh;
   padding: 20px;
   gap: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Header */
@@ -91,6 +108,19 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 16px;
   box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
 }
 
 .app-title {
@@ -100,6 +130,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .app-title i {
@@ -131,6 +162,24 @@ body {
   position: relative;
   width: 160px;
   height: 160px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.main-timer-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .timer-circle {
@@ -291,11 +340,54 @@ body {
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+/* Enhanced Button Ripple Effect */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+  pointer-events: none;
+}
+
+.btn:active::after {
+  width: 100%;
+  height: 100%;
+}
+
+/* Shine Effect */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease-out;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn:active {
@@ -305,10 +397,14 @@ body {
 
 .btn i {
   font-size: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .btn span {
   font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 
 /* Button Variants */
@@ -316,36 +412,48 @@ body {
   background: var(--gradient-primary);
   color: white;
   border: 1px solid var(--primary-dark);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
 .btn-primary:hover {
   background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
 }
 
 .btn-break {
   background: var(--gradient-break);
   color: white;
   border: 1px solid var(--break-dark);
+  box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
 }
 
 .btn-break:hover {
   background: linear-gradient(135deg, var(--break-dark), var(--break-color));
+  box-shadow: 0 8px 25px rgba(0, 212, 170, 0.4);
 }
 
 .btn-end {
   background: var(--gradient-warning);
   color: white;
   border: 1px solid var(--warning-dark);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
 }
 
 .btn-end:hover {
   background: linear-gradient(135deg, var(--warning-dark), var(--warning-color));
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
 }
 
 .btn-danger {
   background: var(--gradient-danger);
   color: white;
   border: 1px solid var(--danger-dark);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, var(--danger-dark), var(--danger-color));
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
 }
 
 .btn-danger:hover {
@@ -383,6 +491,26 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 10px;
   box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.status::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.status:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .status-indicator {
