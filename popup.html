@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Work Timer Pro</title>
+  <link rel="stylesheet" href="popup.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Background animation -->
+    <div class="background-animation">
+      <div class="floating-circle circle-1"></div>
+      <div class="floating-circle circle-2"></div>
+      <div class="floating-circle circle-3"></div>
+      <div class="floating-circle circle-4"></div>
+    </div>
+
+    <!-- Main glass container -->
+    <div class="glass-container">
+      <!-- Header with current time -->
+      <div class="header-glass">
+        <div class="app-title">
+          <i class="fas fa-clock-rotate-left"></i>
+          <span>Work Timer Pro</span>
+        </div>
+        <div class="current-time-container">
+          <i class="fas fa-calendar-day"></i>
+          <div class="current-time" id="current-time">00:00:00</div>
+        </div>
+      </div>
+
+      <!-- Main timer section -->
+      <div class="timer-section-glass">
+        <div class="work-timer-glass">
+          <div class="timer-label-glass">
+            <i class="fas fa-briefcase"></i>
+            <span>Work Session</span>
+          </div>
+          
+          <!-- Centered timer ring -->
+          <div class="timer-ring-container">
+            <div class="timer-ring-glass">
+              <svg class="ring-progress" viewBox="0 0 200 200">
+                <!-- Background ring -->
+                <circle cx="100" cy="100" r="85" 
+                        stroke="rgba(255, 255, 255, 0.1)" 
+                        stroke-width="8" 
+                        fill="none"/>
+                <!-- Progress ring -->
+                <circle id="progress-ring" cx="100" cy="100" r="85" 
+                        stroke="url(#gradient)" 
+                        stroke-width="8" 
+                        fill="none" 
+                        stroke-dasharray="534.07" 
+                        stroke-dashoffset="534.07" 
+                        transform="rotate(-90 100 100)" 
+                        class="progress-circle"/>
+                <!-- Gradient definition -->
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#2196F3;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#9C27B0;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              
+              <!-- Timer display in center -->
+              <div class="timer-center-content">
+                <div id="main-timer" class="main-timer-glass">00:00:00</div>
+                <div class="timer-subtitle">Today's Work</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Break timer section -->
+        <div class="break-timer-glass" id="break-timer-container">
+          <div class="break-header">
+            <div class="break-label">
+              <i class="fas fa-coffee"></i>
+              <span>Break Time</span>
+            </div>
+            <div id="break-timer" class="break-timer-display">00:00</div>
+          </div>
+          
+          <div class="break-progress-container">
+            <div class="break-progress-track">
+              <div id="break-progress-bar" class="break-progress-fill"></div>
+            </div>
+            <div class="break-progress-text">
+              <span class="break-start">Start</span>
+              <span class="break-end">End</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control buttons -->
+      <div class="controls-glass">
+        <button id="start-work-btn" class="btn-glass btn-primary-glass">
+          <div class="btn-content">
+            <i class="fas fa-play"></i>
+            <span>Start Work</span>
+          </div>
+          <div class="btn-shine"></div>
+        </button>
+        
+        <div class="btn-row">
+          <button id="breakfast-btn" class="btn-glass btn-breakfast-glass">
+            <div class="btn-content">
+              <i class="fas fa-coffee"></i>
+              <span>Breakfast</span>
+            </div>
+            <div class="btn-shine"></div>
+          </button>
+          
+          <button id="lunch-btn" class="btn-glass btn-lunch-glass">
+            <div class="btn-content">
+              <i class="fas fa-utensils"></i>
+              <span>Lunch</span>
+            </div>
+            <div class="btn-shine"></div>
+          </button>
+        </div>
+        
+        <button id="end-break-btn" class="btn-glass btn-danger-glass">
+          <div class="btn-content">
+            <i class="fas fa-stop"></i>
+            <span>End Break</span>
+          </div>
+          <div class="btn-shine"></div>
+        </button>
+        
+        <button id="off-day-btn" class="btn-glass btn-warning-glass">
+          <div class="btn-content">
+            <i class="fas fa-power-off"></i>
+            <span>End Day</span>
+          </div>
+          <div class="btn-shine"></div>
+        </button>
+      </div>
+
+      <!-- Status section -->
+      <div class="status-glass">
+        <div class="status-content" id="status">
+          <div class="status-indicator-wrapper">
+            <div class="status-indicator ready"></div>
+            <div class="status-pulse"></div>
+          </div>
+          <span class="status-text">Ready to start</span>
+        </div>
+        
+        <!-- Alarm controls -->
+        <div class="alarm-controls-glass">
+          <button id="stop-alarm-btn" class="btn-glass btn-alarm-glass">
+            <div class="btn-content">
+              <i class="fas fa-bell-slash"></i>
+              <span>Stop Alarm</span>
+            </div>
+            <div class="btn-shine"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification system -->
+    <div id="notification-area" class="notification-area-glass"></div>
+    
+    <!-- Floating action hint -->
+    <div class="floating-hint" id="floating-hint">
+      <i class="fas fa-lightbulb"></i>
+      <span>Click buttons on your job sheet to auto-sync!</span>
+    </div>
+  </div>
+
+  <!-- Enhanced audio system -->
+  <audio id="alarm-sound" loop>
+    <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869.mp3" type="audio/mpeg">
+  </audio>
+  
+  <audio id="notification-sound">
+    <source src="https://assets.mixkit.co/active_storage/sfx/316/316.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="popup.js"></script>
+</body>
+</html>
