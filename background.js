@@ -58,7 +58,7 @@ async function handleWorkAction(actionType) {
           state.appState = 'working';
           
           // Show notification
-          showNotification('Work Started', 'Work session started from job sheet! 💪', 'success');
+          showNotification('Work Started', 'Work session started from job sheet!', 'success');
           console.log('Work started from job sheet');
         }
         break;
@@ -71,7 +71,7 @@ async function handleWorkAction(actionType) {
           const timeString = `${totalHours}h ${totalMinutes}m`;
           
           // Show notification with total work time
-          showNotification('Work Day Completed! 🎉', `Total work time: ${timeString}`, 'success');
+          showNotification('Work Day Completed!', `Total work time: ${timeString}`, 'success');
           
           // Reset state
           state = {
@@ -98,7 +98,7 @@ async function handleWorkAction(actionType) {
           state.appState = 'break';
           
           // Show notification
-          showNotification('Breakfast Break Started', 'Enjoy your 15-minute breakfast break! 🍽️', 'info');
+          showNotification('Breakfast Break Started', 'Enjoy your 15-minute breakfast break! ', 'info');
           console.log('Breakfast break started from job sheet');
         }
         break;
@@ -112,7 +112,7 @@ async function handleWorkAction(actionType) {
           state.appState = 'break';
           
           // Show notification
-          showNotification('Lunch Break Started', 'Enjoy your 1-hour lunch break! 🍽️', 'info');
+          showNotification('Lunch Break Started', 'Enjoy your 1-hour lunch break!', 'info');
           console.log('Lunch break started from job sheet');
         }
         break;
@@ -225,8 +225,8 @@ async function handleBreakAlarm() {
     }
     
     // Show break over notification
-    showNotification('Break Time Over! ⏰', 'Your break time has ended. Please return to work.', 'warning');
-    
+    showNotification('Break Time Over!', 'Your break time has ended. Please return to work.', 'warning');
+
     // Clear the alarm
     chrome.alarms.clear('breakAlarm');
     

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Work Time Tracker",
+  "name": "ERP Work Time Pro",
   "version": "1.0",
-  "description": "Track your work time and breaks with alarms",
+  "description": "Modern work time tracking with smart break management and job sheet integration. Developed by Dulina.",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

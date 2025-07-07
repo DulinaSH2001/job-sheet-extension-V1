@@ -1,4 +1,4 @@
-# Work Timer Pro - Compact Edition
+# ERP Work Time Pro - Compact Edition
 
 A modern, compact Chrome extension for tracking work time with smart break management and job sheet integration.
 
@@ -57,7 +57,7 @@ A modern, compact Chrome extension for tracking work time with smart break manag
 ### Ready to Start
 ```
 ┌─────────────────────────┐
-│ Work Timer              │
+│ ERP Work Timer          │
 │ ○ Ready to start        │
 │                         │
 │    [Start Work Day]     │
@@ -67,7 +67,7 @@ A modern, compact Chrome extension for tracking work time with smart break manag
 ### Working
 ```
 ┌─────────────────────────┐
-│ Work Timer  ●  Working  │
+│ ERP Work Timer  ●  Working  │
 │     ⏱️ 02:30:15         │
 │                         │
 │ [Breakfast] [Lunch]     │
@@ -78,7 +78,7 @@ A modern, compact Chrome extension for tracking work time with smart break manag
 ### On Break
 ```
 ┌─────────────────────────┐
-│ Work Timer  ●  Break    │
+│ ERP Work Timer  ●  Break    │
 │     ⏱️ 02:30:15         │
 │                         │
 │ ☕ Breakfast: 12:45     │
@@ -182,6 +182,10 @@ Feel free to contribute improvements, bug fixes, or new features. The codebase i
 
 This project is open source and available under the MIT License.
 
+## 👨‍💻 Developer
+
+Developed by **Dulina** - 2025-07-06
+
 ---
 
-**Work Timer Pro** - Making work time tracking simple, smart, and beautiful. 🚀
+**ERP Work Time Pro** - Making work time tracking simple, smart, and beautiful. 🚀
