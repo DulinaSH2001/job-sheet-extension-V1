@@ -227,6 +227,9 @@ async function handleBreakAlarm() {
     // Show break over notification
     showNotification('Break Time Over!', 'Your break time has ended. Please return to work.', 'warning');
 
+    // Open alarm.html in a new tab to play the alarm sound
+    chrome.tabs.create({ url: chrome.runtime.getURL('alarm.html') });
+
     // Clear the alarm
     chrome.alarms.clear('breakAlarm');
     

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Break Over! Alarm</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .alarm-message {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .stop-btn {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: background 0.2s;
+    }
+    .stop-btn:hover {
+      background: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+  <div class="alarm-message">
+    <span>⏰ Break Time Over!<br>Return to work.</span>
+  </div>
+  <button class="stop-btn" id="stop-alarm">Stop Alarm</button>
+  <audio id="alarm-audio" loop autoplay>
+    <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869.mp3" type="audio/mpeg">
+  </audio>
+  <script>
+    // Play alarm sound on load
+    const audio = document.getElementById('alarm-audio');
+    audio.volume = 1.0;
+    audio.play().catch(() => {});
+    // Stop alarm and close tab
+    document.getElementById('stop-alarm').onclick = () => {
+      audio.pause();
+      window.close();
+    };
+    // Try to close tab automatically after 2 minutes
+    setTimeout(() => { window.close(); }, 2 * 60 * 1000);
+  </script>
+</body>
+</html> 
