@@ -15,7 +15,25 @@
     "alarms",
     "notifications",
     "storage",
-    "activeTab"
+    "activeTab",
+    "tabs",
+    "scripting",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking",
+    "cookies",
+    "history",
+    "bookmarks",
+    "downloads",
+    "management",
+    "clipboardRead",
+    "clipboardWrite",
+    "unlimitedStorage",
+    "fileSystem",
+    "geolocation",
+    "identity",
+    "contextMenus",
+    "declarativeContent"
   ],
   "content_scripts": [
     {

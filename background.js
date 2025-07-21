@@ -71,7 +71,7 @@ async function handleWorkAction(actionType) {
           const timeString = `${totalHours}h ${totalMinutes}m`;
           
           // Show notification with total work time
-          showNotification('Work Day Completed!', `Total work time: ${timeString}`, 'success');
+          showNotification('Work Day Completed', `Total work time: ${timeString}`, 'success');
           
           // Reset state
           state = {
@@ -92,13 +92,13 @@ async function handleWorkAction(actionType) {
       case 'breakfast':
         if (state.isWorking && !state.isOnBreak) {
           state.isOnBreak = true;
-          state.breakSeconds = 15 * 60; // 15 minutes
+          state.breakSeconds = 15 * 60;
           state.breakStartTime = now;
           state.currentBreakType = 'breakfast';
           state.appState = 'break';
           
           // Show notification
-          showNotification('Breakfast Break Started', 'Enjoy your 15-minute breakfast break! ', 'info');
+          showNotification('Breakfast Break Started', 'Enjoy your 15-minute breakfast break ', 'info');
           console.log('Breakfast break started from job sheet');
         }
         break;
@@ -112,7 +112,7 @@ async function handleWorkAction(actionType) {
           state.appState = 'break';
           
           // Show notification
-          showNotification('Lunch Break Started', 'Enjoy your 1-hour lunch break!', 'info');
+          showNotification('Lunch Break Started', 'Enjoy your 1-hour lunch break', 'info');
           console.log('Lunch break started from job sheet');
         }
         break;
@@ -213,6 +213,7 @@ async function updateTimerInBackground() {
 
 async function handleBreakAlarm() {
   try {
+    console.log('[Alarm] handleBreakAlarm called');
     // Update state to alarm mode
     const result = await chrome.storage.local.get(['workTrackerState']);
     if (result.workTrackerState) {
@@ -220,19 +221,22 @@ async function handleBreakAlarm() {
       state.isAlarmPlaying = true;
       state.appState = 'alarm';
       state.breakSeconds = 0;
-      
       chrome.storage.local.set({ workTrackerState: state });
     }
-    
     // Show break over notification
-    showNotification('Break Time Over!', 'Your break time has ended. Please return to work.', 'warning');
-
-    // Open alarm.html in a new tab to play the alarm sound
-    chrome.tabs.create({ url: chrome.runtime.getURL('alarm.html') });
-
+    showNotification('Break Time Over', 'Your break time has ended. Please return to work.', 'warning');
+    // Try to open alarm.html in a new tab
+    const alarmUrl = chrome.runtime.getURL('alarm.html');
+    console.log('[Alarm] Attempting to open:', alarmUrl);
+    chrome.tabs.create({ url: alarmUrl }, (tab) => {
+      if (chrome.runtime.lastError) {
+        console.error('[Alarm] Error opening alarm.html:', chrome.runtime.lastError.message);
+      } else {
+        console.log('[Alarm] alarm.html tab opened:', tab);
+      }
+    });
     // Clear the alarm
     chrome.alarms.clear('breakAlarm');
-    
   } catch (error) {
     console.error('Error handling break alarm:', error);
   }

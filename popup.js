@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateUI();
     saveState();
-    showNotification('Work day started! 💪', 'success');
+    showNotification('Work day started!', 'success');
     updateStatus('working', 'Working - Stay focused!');
   }
   
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const breakName = type === 'breakfast' ? 'Breakfast' : 'Lunch';
     const breakDuration = type === 'breakfast' ? '15 minutes' : '1 hour';
-    showNotification(`${breakName} break started! Enjoy your ${breakDuration} 🍽️`, 'info');
+    showNotification(`${breakName} break started! Enjoy your`, 'info');
     updateStatus('break', `On ${breakName.toLowerCase()} break`);
     
     // Update break type text
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateUI();
     saveState();
-    showNotification('Break ended! Back to work 💼', 'success');
+    showNotification('Break ended! Back to work', 'success');
     updateStatus('working', 'Working - Stay focused!');
     
     // Clear break countdown
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateUI();
     saveState();
-    showNotification(`Work day completed! Total time: ${timeString} 🎉`, 'success');
+    showNotification(`Work day completed! Total time: ${timeString}`, 'success');
     updateStatus('ready', 'Ready to start your next work day');
     
     // Clear intervals
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           // Check if break is almost over (10 seconds warning)
           if (state.breakSeconds === 10) {
-            showNotification('Break ending in 10 seconds! ⏰', 'warning');
+            showNotification('Break ending in 10 seconds!', 'warning');
           }
           
           // Check if break is over
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateUI();
     playAlarm();
-    showNotification('Break time is over! Please return to work 🚨', 'warning');
+    showNotification('Break time is over! Please return to work', 'warning');
     updateStatus('break', 'Break time ended - Click to return to work');
     
     // Clear break countdown
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let titleFlash = 0;
     const originalTitle = document.title;
     const flashInterval = setInterval(() => {
-      document.title = titleFlash % 2 === 0 ? '🚨 BREAK OVER!' : originalTitle;
+      document.title = titleFlash % 2 === 0 ? ' BREAK OVER!' : originalTitle;
       titleFlash++;
       
       if (titleFlash > 10 || !state.isAlarmPlaying) {
