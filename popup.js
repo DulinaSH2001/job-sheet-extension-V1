@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function setupEventListeners() {
     // Work controls
     elements.startWorkBtn?.addEventListener('click', startWork);
-    elements.breakfastBtn?.addEventListener('click', () => startBreak('breakfast', 15 * 60));
+    elements.breakfastBtn?.addEventListener('click', () => startBreak('breakfast', 0.1 * 60));
     elements.lunchBtn?.addEventListener('click', () => startBreak('lunch', 60 * 60));
     elements.endDayBtn?.addEventListener('click', endWorkDay);
     elements.endBreakBtn?.addEventListener('click', endBreak);
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveState();
     
     const breakName = type === 'breakfast' ? 'Breakfast' : 'Lunch';
-    const breakDuration = type === 'breakfast' ? '15 minutes' : '1 hour';
+    const breakDuration = type === 'breakfast' ? '3 minutes' : '1 hour';
     showNotification(`${breakName} break started! Enjoy your`, 'info');
     updateStatus('break', `On ${breakName.toLowerCase()} break`);
     
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           // Check if break is almost over (10 seconds warning)
           if (state.breakSeconds === 10) {
-            showNotification('Break ending in 10 seconds!', 'warning');
+            //showNotification('Break ending in 10 seconds!', 'warning');
           }
           
           // Check if break is over
@@ -233,20 +233,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function handleBreakEnd() {
     console.log('Break time ended');
-    
-    state.isAlarmPlaying = true;
-    state.appState = 'alarm';
-    
-    updateUI();
-    playAlarm();
-    showNotification('Break time is over! Please return to work', 'warning');
-    updateStatus('break', 'Break time ended - Click to return to work');
-    
-    // Clear break countdown
+    // Only clear break timer and save state. Do not set alarm state or play alarm sound here.
     if (breakTimerInterval) {
       clearInterval(breakTimerInterval);
       breakTimerInterval = null;
     }
+    saveState();
   }
   
   function playAlarm() {
@@ -361,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function updateBreakProgress() {
     if (elements.breakProgressBar) {
-      const totalTime = state.currentBreakType === 'breakfast' ? 15 * 60 : 60 * 60;
+      const totalTime = state.currentBreakType === 'breakfast' ? 0.1 * 60 : 60 * 60;
       const elapsed = totalTime - state.breakSeconds;
       const progress = Math.max(0, Math.min(100, (elapsed / totalTime) * 100));
       
@@ -401,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Update alarm controls visibility
     if (elements.alarmControls) {
-      if (state.appState === 'alarm') {
+      if (state.isAlarmPlaying && state.appState === 'alarm') {
         elements.alarmControls.classList.add('active');
       } else {
         elements.alarmControls.classList.remove('active');
@@ -527,7 +519,20 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
             state.appState = 'ready';
           }
-          
+
+          // Ensure correct timer/interval state if working
+          if (state.appState === 'working') {
+            if (breakTimerInterval) {
+              clearInterval(breakTimerInterval);
+              breakTimerInterval = null;
+            }
+            if (timerInterval) {
+              clearInterval(timerInterval);
+              timerInterval = null;
+            }
+            startTimerLoop();
+          }
+
           console.log('State loaded:', state);
           updateUI();
           
@@ -589,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
               break;
             case 'breakfast':
               if (state.isWorking && !state.isOnBreak) {
-                startBreak('breakfast', 15 * 60);
+                startBreak('breakfast', 3 * 60);
               }
               break;
             case 'lunch':
@@ -606,6 +611,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
+  // Listen for storage changes to sync state (e.g., when alarm is stopped from alarm popup)
+  if (chrome && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === 'local' && changes.workTrackerState) {
+        state = { ...state, ...changes.workTrackerState.newValue };
+        // If the alarm was stopped and we're back to working, clear intervals
+        if (state.appState === 'working') {
+          if (breakTimerInterval) {
+            clearInterval(breakTimerInterval);
+            breakTimerInterval = null;
+          }
+          if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+          }
+          // Restart the work timer loop if needed
+          startTimerLoop();
+        }
+        updateUI();
+        updateStatusAfterLoad();
+      }
+    });
+  }
+
   // Cleanup on page unload
   window.addEventListener('beforeunload', () => {
     if (clockInterval) clearInterval(clockInterval);

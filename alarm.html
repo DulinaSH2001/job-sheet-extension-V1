@@ -3,60 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <title>Break Over! Alarm</title>
+  <link rel="stylesheet" href="popup.css">
   <style>
     body {
-      background: #0f172a;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
+      display: flex;
+      margin-top: 100px;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      overflow: hidden;
+    }
+    .alarm-container {
+      background: rgba(30, 41, 59, 0.92);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.08);
+      border: 2px solid var(--primary-color);
+      width: 400px;
+      height: 300px;
+      box-sizing: border-box;
+      padding: 18px 18px 10px 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
+      gap: 8px;
+      position: relative;
+      z-index: 2;
+      backdrop-filter: blur(14px);
+      overflow: hidden;
     }
-    .alarm-message {
-      font-size: 2rem;
-      margin-bottom: 2rem;
+    .alarm-icon {
+      font-size: 2.1rem;
+      color: var(--warning-color);
+      margin-bottom: 2px;
+      animation: pulse 1.5s infinite;
+      filter: drop-shadow(0 2px 8px rgba(245,158,11,0.13));
+    }
+    .alarm-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: var(--warning-color);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.13);
       text-align: center;
     }
+    .alarm-message {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .controls {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 0 0;
+    }
     .stop-btn {
-      background: #ef4444;
+      background: var(--gradient-danger);
       color: #fff;
       border: none;
-      border-radius: 8px;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
+      border-radius: 14px;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(239,68,68,0.13);
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      outline: none;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stop-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.13), transparent);
+      transition: left 0.5s ease-out;
+    }
+    .stop-btn:hover::before {
+      left: 100%;
     }
     .stop-btn:hover {
-      background: #b91c1c;
+      background: linear-gradient(135deg, var(--danger-dark), var(--danger-color));
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 8px 25px rgba(239,68,68,0.18);
+    }
+    .stop-btn:active {
+      transform: scale(0.98);
+    }
+    .alarm-footer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+    @media (max-width: 420px) {
+      .alarm-container {
+        width: 98vw;
+        height: 98vh;
+        padding: 10px 2vw 8px 2vw;
+      }
+      .alarm-title {
+        font-size: 1rem;
+      }
+      .alarm-message {
+        font-size: 0.95rem;
+      }
+      .stop-btn {
+        font-size: 0.95rem;
+        padding: 0.6rem 1rem;
+      }
     }
   </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="alarm-message">
-    <span>⏰ Break Time Over!<br>Return to work.</span>
+  <div class="alarm-container">
+    <div class="alarm-icon"><i class="fas fa-bell"></i></div>
+    <div class="alarm-title">⏰ Break Time Over!</div>
+    <div class="alarm-message">Your break has ended.<br>Click below to stop the alarm and return to work.</div>
+    <div class="controls">
+      <button class="btn btn-danger stop-btn" id="stop-alarm">
+        <i class="fas fa-bell-slash"></i>
+        <span>Stop Alarm</span>
+      </button>
+    </div>
+    <div class="alarm-footer">
+      <span style="background: #1e3444; padding: 4px 10px; border-radius: 16px; display: inline-block; box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
+        Powered by <strong style="color:#00d4aa;">Asyntax</strong>
+      </span>
+    </div>
   </div>
-  <button class="stop-btn" id="stop-alarm">Stop Alarm</button>
   <audio id="alarm-audio" loop autoplay>
     <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
     <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869.mp3" type="audio/mpeg">
   </audio>
-  <script>
-    // Play alarm sound on load
-    const audio = document.getElementById('alarm-audio');
-    audio.volume = 1.0;
-    audio.play().catch(() => {});
-    // Stop alarm and close tab
-    document.getElementById('stop-alarm').onclick = () => {
-      audio.pause();
-      window.close();
-    };
-    // Try to close tab automatically after 2 minutes
-    setTimeout(() => { window.close(); }, 2 * 60 * 1000);
-  </script>
+  <script src="alarm.js"></script>
 </body>
 </html> 

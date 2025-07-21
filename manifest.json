@@ -19,21 +19,12 @@
     "tabs",
     "scripting",
     "webNavigation",
-    "webRequest",
-    "webRequestBlocking",
-    "cookies",
-    "history",
-    "bookmarks",
-    "downloads",
-    "management",
-    "clipboardRead",
-    "clipboardWrite",
-    "unlimitedStorage",
-    "fileSystem",
-    "geolocation",
-    "identity",
     "contextMenus",
-    "declarativeContent"
+    "clipboardWrite",
+    "clipboardRead"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "content_scripts": [
     {

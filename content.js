@@ -6,10 +6,10 @@
   
   // Configuration - Common button text patterns that might appear on job sheets
   const BUTTON_PATTERNS = {
-    on: ['on', 'start', 'clock in', 'begin work', 'start work', 'work start', 'signin', 'sign in'],
-    off: ['off', 'stop', 'clock out', 'end work', 'finish work', 'work end', 'signout', 'sign out'],
-    breakfast: ['breakfast', 'morning break', 'break 1', 'short break', 'coffee break'],
-    lunch: ['lunch', 'lunch break', 'break 2', 'meal break', 'dinner']
+    on: ['on', 'start', 'start work', 'work start'],
+    off: ['off', 'stop', 'end work', 'finish work', 'work end'],
+    breakfast: ['breakfast', 'morning break'],
+    lunch: ['lunch', 'lunch break', 'meal break']
   };
   
   // Initialize the content script

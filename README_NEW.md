@@ -78,10 +78,10 @@ A modern, compact Chrome extension for tracking work time with smart break manag
 ### On Break
 ```
 ┌─────────────────────────┐
-│ ERP Work Timer  ●  Break    │
-│     ⏱️ 02:30:15         │
+│ ERP Work Timer  ●  Break│
+│     ⏱️ 02:30:15        │
 │                         │
-│ ☕ Breakfast: 12:45     │
+│ ☕ Breakfast: 12:45    │
 │ ████████░░░░ 67%        │
 │                         │
 │      [End Break]        │
