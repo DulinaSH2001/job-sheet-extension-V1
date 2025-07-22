@@ -96,13 +96,13 @@ async function handleWorkAction(actionType) {
       case 'breakfast':
         if (state.isWorking && !state.isOnBreak) {
           state.isOnBreak = true;
-          state.breakSeconds = 0.1 * 60; // 20 minutes
+          state.breakSeconds = 15 * 60; // 15 minutes
           state.breakStartTime = now;
           state.currentBreakType = 'breakfast';
           state.appState = 'break';
           
           // Show notification
-          showNotification('Breakfast Break Started', 'Enjoy your 2-minute breakfast break!', 'info');
+          showNotification('Breakfast Break Started', 'Enjoy your 15-minute breakfast break!', 'info');
           console.log('Breakfast break started from job sheet');
         }
         break;
