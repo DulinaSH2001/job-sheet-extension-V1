@@ -6,10 +6,10 @@
   
   // Configuration - Common button text patterns that might appear on job sheets
   const BUTTON_PATTERNS = {
-    on: ['on', 'start', 'start work', 'work start'],
-    off: ['off', 'stop', 'end work', 'finish work', 'work end'],
-    breakfast: ['breakfast', 'morning break'],
-    lunch: ['lunch', 'lunch break', 'meal break']
+    on: ['on', 'start', 'clock in', 'begin work', 'start work', 'work start', 'signin', 'sign in'],
+    off: ['off', 'stop', 'clock out', 'end work', 'finish work', 'work end', 'signout', 'sign out'],
+    breakfast: ['breakfast', 'morning break', 'break 1', 'short break', 'coffee break'],
+    lunch: ['lunch', 'lunch break', 'break 2', 'meal break', 'dinner']
   };
   
   // Initialize the content script
@@ -30,22 +30,38 @@
     // Check if clicked element is a button or clickable element
     if (isClickableElement(target)) {
       const buttonText = getElementText(target);
+      console.log('Detected button text:', buttonText);
       const actionType = detectActionType(buttonText);
       
       if (actionType) {
         console.log(`Detected ${actionType} action from job sheet button:`, buttonText);
         
         // Send message to background script
-        chrome.runtime.sendMessage({
-          action: 'triggerWorkAction',
-          actionType: actionType,
-          buttonText: buttonText,
-          url: window.location.href
-        }, (response) => {
-          if (response && response.success) {
-            showNotification(`${actionType.toUpperCase()} action triggered from job sheet`);
+        if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
+          try {
+            chrome.runtime.sendMessage(
+              {
+                action: 'triggerWorkAction',
+                actionType: actionType,
+                buttonText: buttonText,
+                url: window.location.href
+              },
+              (response) => {
+                if (chrome.runtime.lastError) {
+                  console.warn('Extension context invalidated or background script unavailable:', chrome.runtime.lastError.message);
+                  return;
+                }
+                if (response && response.success) {
+                  showNotification(`${actionType.toUpperCase()} action triggered from job sheet`);
+                }
+              }
+            );
+          } catch (e) {
+            console.warn('Failed to send message to background script:', e);
           }
-        });
+        } else {
+          console.warn('chrome.runtime.sendMessage is not available. Are you running as a Chrome extension?');
+        }
       }
     }
   }
